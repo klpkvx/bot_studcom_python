@@ -7,9 +7,6 @@ from asyncio import create_task
 
 from utils.common_utils import get_subscribed_users, send_daily_message
 
-def test_ufnc ():
-    pass
-
 async def on_startup(_):  # info about start bot
     print('Bot has been started\n')
     for user_id in config.admin_ids:
