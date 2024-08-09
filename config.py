@@ -10,15 +10,16 @@ TOKEN = '6618766493:AAExSHuMwIt126mg4F4mKUuiahcnOEwG32Y'
 
 class FileLocation:
     data_dir = 'data/'
-    text_dir = data_dir + 'cmd_files/'
-    horo_dir = 'data/horo_pics/'
+    html_dir = data_dir + 'html/'
+    horo_dir = data_dir + 'horo_pics/'
+    json_dir = data_dir + 'json/'
 
-    cmd_help = join(text_dir, 'cmd_help.html')
-    cmd_comenda_info = join(text_dir, 'cmd_comenda_info.html')
-    cmd_check_rooms_time = join(text_dir, 'cmd_check_rooms_time.html')
-    cmd_my_starosta = join(text_dir, 'cmd_my_starosta.html')
-    cmd_rasselenie_info = join(text_dir, 'cmd_rasselenie_info.html')
-    cmd_horo_help = join(text_dir, 'cmd_horo_help.html')
+    cmd_help = join(html_dir, 'cmd_help.html')
+    cmd_comenda_info = join(html_dir, 'cmd_comenda_info.html')
+    cmd_check_rooms_time = join(html_dir, 'cmd_check_rooms_time.html')
+    cmd_my_starosta = join(html_dir, 'cmd_my_starosta.html')
+    cmd_rasselenie_info = join(html_dir, 'cmd_rasselenie_info.html')
+    cmd_horo_help = join(html_dir, 'cmd_horo_help.html')
 
 
 admin_ids = [
