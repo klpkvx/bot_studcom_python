@@ -1,7 +1,7 @@
-from utils import client, admin, other
+from utils import client, other
 import aiogram.utils as ut
 from aiogram.utils import executor
-from create_bot import dp, bot
+from utils.create_bot import dp, bot
 import config
 from asyncio import create_task
 
@@ -20,10 +20,7 @@ async def on_startup(_):  # info about start bot
         create_task(send_daily_message(user_id))
 
 
-'''Client_part'''
-client.register_handlers_client(dp)
-
-'''Common part'''
-other.register_handlers_other(dp)
-
-executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
+if __name__ == '__main__':
+    client.register_handlers_client(dp)  # Events from user
+    other.register_handlers_other(dp)  # Other events
+    executor.start_polling(dp, skip_updates=True, on_startup=on_startup)

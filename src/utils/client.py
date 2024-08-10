@@ -1,16 +1,14 @@
 import os
+import json
+import config
 from aiogram import types, Dispatcher
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher import FSMContext
-
-import config
-import json
-from utils.common_utils import get_subscribed_users, get_subscription_status, send_daily_message, \
-    set_subscription_status, get_user_time
-from create_bot import dp, bot, get_json_from_table
-from create_bot import database_table, other_data_table, food_ds_table, shop_ds_table, admin_ds_table
+from utils.common_utils import get_subscribed_users, get_subscription_status, send_daily_message, set_subscription_status
+from utils.create_bot import dp, bot
+from utils.create_bot import database_table, other_data_table, food_ds_table, shop_ds_table, admin_ds_table
 
 
 async def commands_start(message: types.Message, state: FSMContext):
@@ -676,7 +674,7 @@ async def subscribe_horo(message: types.Message):
         return
 
     set_subscription_status(user_id, True)
-    with open('data/json/time.json', 'r') as file:
+    with open(config.FileLocation.time_json, 'r') as file:
         time_res = json.load(file)
     hour = time_res['hour']
     minute = time_res['minutes']
@@ -700,7 +698,7 @@ async def set_time_horo(message: types.Message):
     minute = res[2]
     if res[1].isdigit() and res[2].isdigit() and int(hour) >= 0 and int(hour) <= 23 and int(minute) >= 0 and int(
             minute) <= 59:
-        file = open(config.FileLocation.json_dir + 'time.json', 'w')
+        file = open(config.FileLocation.time_json, 'w')
         res_time = {}
         res_time['hour'] = hour
         res_time['minutes'] = minute

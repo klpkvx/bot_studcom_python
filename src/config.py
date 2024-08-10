@@ -9,9 +9,9 @@ TOKEN = '6618766493:AAExSHuMwIt126mg4F4mKUuiahcnOEwG32Y'
 # Пути к папкам и файлам:
 
 class FileLocation:
-    data_dir = 'data/'
+    data_dir = '../data/'
     html_dir = data_dir + 'html/'
-    pics = data_dir + '/'
+    pics = data_dir + 'pics/'
     json_dir = data_dir + 'json/'
 
     cmd_help = join(html_dir, 'cmd_help.html')
@@ -20,6 +20,9 @@ class FileLocation:
     cmd_my_starosta = join(html_dir, 'cmd_my_starosta.html')
     cmd_rasselenie_info = join(html_dir, 'cmd_rasselenie_info.html')
     cmd_horo_help = join(html_dir, 'cmd_horo_help.html')
+
+    time_json = json_dir + 'time.json'
+    subsciptions_json = json_dir + 'subscriptions.json'
 
 
 admin_ids = [

@@ -1,5 +1,5 @@
 from aiogram import types, Dispatcher
-from create_bot import bot
+from utils.create_bot import bot
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher import FSMContext
