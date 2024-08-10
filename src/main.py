@@ -4,8 +4,11 @@ from aiogram.utils import executor
 from utils.create_bot import dp, bot
 import config
 from asyncio import create_task
-
+import logging
+import sys
 from utils.common_utils import get_subscribed_users, send_daily_message
+from utils.authentication import AuthorizationMiddleware
+
 
 async def on_startup(_):  # info about start bot
     print('Bot has been started\n')
@@ -21,6 +24,8 @@ async def on_startup(_):  # info about start bot
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+    dp.setup_middleware(AuthorizationMiddleware())
     client.register_handlers_client(dp)  # Events from user
     other.register_handlers_other(dp)  # Other events
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
