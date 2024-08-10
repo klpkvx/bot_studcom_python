@@ -85,10 +85,13 @@ class DataBase():
         with sq.connect(self.filename) as con:
             cursor = con.cursor()
             cursor.execute(f'''
-            SELECT * FROM users where {Fields.is_admin} = 1
+            SELECT {Fields.telegram_id} FROM users where {Fields.is_admin} = 1
             ''')
-            result = cursor.fetchall()
-            print(result)
+            lst = []
+            for elem in cursor.fetchall():
+                lst.append(elem[0])
+            return lst
+
 
     def set_admin_for_user(self, requester_td_id: int, username: str, is_admin: int):
         with sq.connect(self.filename) as con:

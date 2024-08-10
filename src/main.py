@@ -2,16 +2,17 @@ from utils import client, other
 import aiogram.utils as ut
 from aiogram.utils import executor
 from utils.create_bot import dp, bot
-import config
 from asyncio import create_task
 import logging
 import sys
 from utils.common_utils import get_subscribed_users, send_daily_message
 from utils.authentication import AuthorizationMiddleware
+from utils.sqlite_db import DataBase
 
 async def on_startup(_):  # info about start bot
     logging.log(level=logging.INFO, msg='Bot has been started')
-    for user_id in config.admin_ids:
+    db = DataBase ()
+    for user_id in db.get_admins_tg_ids ():
         try:
             await bot.send_message(user_id, "Bot has been started")
         except ut.exceptions.BotBlocked:
