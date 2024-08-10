@@ -1,4 +1,4 @@
-from create_bot import dp, bot
+from utils.create_bot import dp, bot
 
 import datetime
 import json
@@ -27,7 +27,7 @@ async def subs_notify(subs, text, keyboard=None, me=None):
 
 def get_subscription_status(user_id):
     try:
-        with open('data/json/subscriptions.json', 'r') as file:
+        with open(config.FileLocation.subsciptions_json, 'r') as file:
             subscriptions = json.load(file)
     except FileNotFoundError:
         subscriptions = {}
@@ -39,18 +39,18 @@ def get_subscription_status(user_id):
 
 def set_subscription_status(user_id, status):
     try:
-        with open('data/json/subscriptions.json', 'r') as file:
+        with open(config.FileLocation.subsciptions_json, 'r') as file:
             subscriptions = json.load(file)
     except FileNotFoundError:
         subscriptions = {}
     subscriptions[str(user_id)]['sub'] = status
-    with open('data/json/subscriptions.json', 'w') as file:
+    with open(config.FileLocation.subsciptions_json, 'w') as file:
         json.dump(subscriptions, file)
 
 
 def get_subscribed_users():
     try:
-        with open('data/json/subscriptions.json', 'r') as file:
+        with open(config.FileLocation.subsciptions_json, 'r') as file:
             subscriptions = json.load(file)
     except FileNotFoundError:
         subscriptions = {}
@@ -63,14 +63,14 @@ def get_subscribed_users():
 
 
 def get_user_sign(user_id):
-    with open('data/json/subscriptions.json', 'r') as file:
+    with open(config.FileLocation.subsciptions_json, 'r') as file:
         subscriptions = json.load(file)
     return subscriptions[str(user_id)]['sign']
 
 
 def get_user_time():
     try:
-        with open(config.FileLocation.json_dir + 'time.json', 'r') as file:
+        with open(config.FileLocation.time_json, 'r') as file:
             time_res = json.load(file)
     except FileNotFoundError:
         time_res = {}
@@ -132,10 +132,9 @@ def build_message(user_sign):
     text_ind = random.randint(0, len(text_list) - 1)
     text = text_list[text_ind]
 
-    files = os.listdir(config.FileLocation.json_dir)
-    files.remove('time.json')
+    files = os.listdir(config.FileLocation.pics)
     selected_file = random.randint(0, len(files) - 1)
-    pic_path = config.FileLocation.json_dir + files[selected_file]
+    pic_path = config.FileLocation.pics + files[selected_file]
     img = open(pic_path, 'rb')
 
     url = 'https://horo.mail.ru/prediction/' + user_sign + '/today/'
