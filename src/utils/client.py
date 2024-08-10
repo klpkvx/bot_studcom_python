@@ -7,9 +7,9 @@ from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher import FSMContext
 from utils.common_utils import get_subscribed_users, get_subscription_status, send_daily_message, set_subscription_status
+from utils.common_utils import subs_notify
 from utils.create_bot import dp, bot
 from utils.create_bot import database_table, other_data_table, food_ds_table, shop_ds_table, admin_ds_table
-
 
 async def commands_start(message: types.Message, state: FSMContext):
     await state.finish()

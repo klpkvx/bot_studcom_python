@@ -90,9 +90,6 @@ async def send_daily_message(user_id):
             await bot.send_photo(user_id, photo=img, caption=text, parse_mode='MarkdownV2')
             print("sended: " + str(user_id))
             await bot.send_message(575238020, f"Отправил доброе утро: {user_id}")
-        else:
-            print(
-                f'now_hour={now.hour} now_min={now.minute} | exp_hour = {expected_hour}, exp_min = {expected_minutes}]')
         await asyncio.sleep(50)
 
 
