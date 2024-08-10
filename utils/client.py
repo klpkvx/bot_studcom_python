@@ -676,7 +676,7 @@ async def subscribe_horo(message: types.Message):
         return
 
     set_subscription_status(user_id, True)
-    with open('data/horo_pics/time.json', 'r') as file:
+    with open('data/json/time.json', 'r') as file:
         time_res = json.load(file)
     hour = time_res['hour']
     minute = time_res['minutes']
@@ -700,7 +700,7 @@ async def set_time_horo(message: types.Message):
     minute = res[2]
     if res[1].isdigit() and res[2].isdigit() and int(hour) >= 0 and int(hour) <= 23 and int(minute) >= 0 and int(
             minute) <= 59:
-        file = open(config.FileLocation.horo_dir + 'time.json', 'w')
+        file = open(config.FileLocation.json_dir + 'time.json', 'w')
         res_time = {}
         res_time['hour'] = hour
         res_time['minutes'] = minute

@@ -26,5 +26,4 @@ client.register_handlers_client(dp)
 '''Common part'''
 other.register_handlers_other(dp)
 
-# Самый последний Хендлер в который все говно будет попадать
 executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
