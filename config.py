@@ -11,7 +11,7 @@ TOKEN = '6618766493:AAExSHuMwIt126mg4F4mKUuiahcnOEwG32Y'
 class FileLocation:
     data_dir = 'data/'
     html_dir = data_dir + 'html/'
-    horo_dir = data_dir + 'horo_pics/'
+    pics = data_dir + '/'
     json_dir = data_dir + 'json/'
 
     cmd_help = join(html_dir, 'cmd_help.html')
