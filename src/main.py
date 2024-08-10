@@ -9,16 +9,14 @@ import sys
 from utils.common_utils import get_subscribed_users, send_daily_message
 from utils.authentication import AuthorizationMiddleware
 
-
 async def on_startup(_):  # info about start bot
-    print('Bot has been started\n')
+    logging.log(level=logging.INFO, msg='Bot has been started')
     for user_id in config.admin_ids:
         try:
             await bot.send_message(user_id, "Bot has been started")
         except ut.exceptions.BotBlocked:
             print(f'User: {user_id} blocked this bot')
     users = get_subscribed_users()
-    print(users)
     for user_id in users:
         create_task(send_daily_message(user_id))
 
