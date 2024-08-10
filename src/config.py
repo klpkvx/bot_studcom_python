@@ -13,6 +13,7 @@ class FileLocation:
     html_dir = data_dir + 'html/'
     pics = data_dir + 'pics/'
     json_dir = data_dir + 'json/'
+    sqlite_dir = data_dir + 'sqlite_db/'
 
     cmd_help = join(html_dir, 'cmd_help.html')
     cmd_comenda_info = join(html_dir, 'cmd_comenda_info.html')
@@ -23,6 +24,7 @@ class FileLocation:
 
     time_json = json_dir + 'time.json'
     subsciptions_json = json_dir + 'subscriptions.json'
+    database = sqlite_dir + 'user_database.sqlite'
 
 
 admin_ids = [
