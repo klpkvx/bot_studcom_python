@@ -74,7 +74,6 @@ def get_user_time():
             time_res = json.load(file)
     except FileNotFoundError:
         time_res = {}
-    print(time_res)
     return time_res['hour'], time_res['minutes']
 
 

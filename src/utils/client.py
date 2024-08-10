@@ -6,10 +6,13 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher import FSMContext
-from utils.common_utils import get_subscribed_users, get_subscription_status, send_daily_message, set_subscription_status
+from utils.common_utils import get_subscribed_users, get_subscription_status, send_daily_message, \
+    set_subscription_status
 from utils.common_utils import subs_notify
 from utils.create_bot import dp, bot
 from utils.create_bot import database_table, other_data_table, food_ds_table, shop_ds_table, admin_ds_table
+from utils.sqlite_db import DataBase
+
 
 async def commands_start(message: types.Message, state: FSMContext):
     await state.finish()
@@ -40,11 +43,12 @@ async def restart_bot(message: types.Message, state: FSMContext):
         await bot.send_message(message.from_user.id, "У вас нет доступа к рестарту бота!\n")
         return
 
-    await bot.send_message(message.from_user.id, 'Перезапускаю бота')
+    await bot.send_message(message.from_user.id, 'Restarting botа')
     for user_id in config.admin_ids:
         if message.from_user.id != user_id:
             try:
-                await bot.send_message(user_id, '{} запросил рестарт бота!'.format(message.from_user.full_name))
+                await bot.send_message(user_id,
+                                       'User {} requested a restart of the bot!'.format(message.from_user.full_name))
             except:
                 print(f'Cannot send message to {user_id}')
     curr_path_to_script = os.getcwd()
@@ -708,6 +712,31 @@ async def set_time_horo(message: types.Message):
         await message.answer("Попробуй пожалуйста /horo_time hour minutes цифрами.\nExample: /horo_time 13 44")
 
 
+async def set_admin_for_user(message: types.Message, state='*'):
+    await state.finish()
+    await state.reset_data()
+
+    data = message.text.split(' ')
+    if (len(data) != 3):
+        await message.answer('Используйте /set_admin <username> <1 или 0>\nПример: /set_admin vls4m 1')
+        return
+
+    if (not data[2].isdigit()):
+        await message.answer('Используйте /set_admin <username> <1 или 0>\nПример: /set_admin vls4m 1')
+        return
+    is_admin = int(data[2])
+    if not (is_admin >= 0 and is_admin <= 1):
+        await message.answer('Используйте /set_admin <username> <1 или 0>\nПример: /set_admin vls4m 1')
+        return
+
+    db = DataBase()
+    res = db.set_admin_for_user(message.from_user.id, data[1], is_admin)
+    # TODO: Notify user which state is_admin has been changed.
+    # TODO: Notify all admins who changed admin mode about user
+    await message.answer(
+        f'Результат добавления пользователем {message.from_user.username} администратора {data[1]}: {res}')
+
+
 def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(commands_start, commands=[
         'start'], state='*')  # /start
@@ -731,5 +760,6 @@ def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(set_time_horo, commands=['horo_time'], state='*')  # /horo_time
     dp.register_message_handler(subscribe_horo, commands=['horo_sub'], state='*')  # /horo_sub
     dp.register_message_handler(unsubscribe_horo, commands=['horo_unsub'], state='*')  # /horo_unsub
+    dp.register_message_handler(set_admin_for_user, commands=['set_admin'], state='*')  # /set_admin
 
     dp.register_message_handler(echo_error, state='*')
