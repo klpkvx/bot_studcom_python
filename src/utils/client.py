@@ -13,7 +13,6 @@ from utils.create_bot import dp, bot
 from utils.create_bot import database_table, other_data_table, food_ds_table, shop_ds_table, admin_ds_table
 from utils.sqlite_db import DataBase
 
-
 async def commands_start(message: types.Message, state: FSMContext):
     await state.finish()
     await state.reset_data()
@@ -748,6 +747,86 @@ async def help_admin (message: types.Message, state='*'):
         await bot.send_message(message.from_user.id, file.read(), parse_mode=types.ParseMode.HTML)
 
 class Form(StatesGroup):
+    waiting_for_message = State()
+    waiting_for_confirmation = State()
+
+
+async def notify_all_users(message: types.Message, state='*'):
+    await state.finish()
+    await state.reset_data()
+    await Form.waiting_for_message.set()
+    await message.reply(
+        "Пожалуйста, введите ваше сообщение. Если хотите добавить изображение, отправьте его после текста.")
+
+
+@dp.message_handler(state=Form.waiting_for_message, commands='confirm')
+async def confirm_send(message: types.Message, state: FSMContext):
+    user_data = await state.get_data()
+    text_msg = user_data.get('text', '')
+    photo_id = user_data.get('photo')
+
+
+    # Добавляем клавиатуру с кнопками "Подтвердить" и "Отменить"
+    keyboard_build_query = InlineKeyboardMarkup(row_width=3, one_time_keyboard=True)
+    confirm_button = InlineKeyboardButton (text='Подтвердить', callback_data='Confirm')
+    cancel_button = InlineKeyboardButton (text='Отменить', callback_data='StopMsg')
+    keyboard_build_query.row (confirm_button, cancel_button)
+    # Уведомляем пользователя о сообщении
+    if photo_id:
+        await message.answer_photo(photo=photo_id, caption=text_msg)
+    else:
+        await message.answer(text_msg)
+
+    await Form.waiting_for_confirmation.set()  # Переход к следующему состоянию
+    await message.answer (f'Хотите отправить это сообщение ВСЕМ пользователям?', reply_markup=keyboard_build_query)
+
+
+@dp.message_handler(state=Form.waiting_for_message, content_types=types.ContentTypes.TEXT)
+async def process_text(message: types.Message, state: FSMContext):
+    await state.update_data(text=message.text)
+    await message.answer(
+        "Теперь отправьте изображение, если хотите его добавить, или введите /confirm для подтверждения отправки.")
+
+
+@dp.message_handler(state=Form.waiting_for_message, content_types=types.ContentTypes.PHOTO)
+async def process_photo(message: types.Message, state: FSMContext):
+    await state.update_data(photo=message.photo[-1].file_id)
+    await message.answer("Изображение добавлено. Для подтверждения отправьте /confirm.")
+
+@dp.callback_query_handler(lambda callback: callback.data in ["Confirm", "StopMsg"], state=Form.waiting_for_confirmation)
+async def process_confirmation(callback: types.CallbackQuery, state: FSMContext):
+    user_data = await state.get_data()
+    text_msg = user_data.get('text', '')
+    photo_id = user_data.get('photo')
+    curr_data = callback.data
+
+    if curr_data == "Confirm":
+        # Отправляем сообщение всем пользователям из списка user_ids
+        db = DataBase()
+        res = db.get_all_users_from_database(callback.from_user.id)
+        users_count = len(res)
+        if not isinstance(res, list):
+            await callback.answer(f'Не удалось отправить сообщение {res}')
+        for data in res:
+            tg_id = data[0]
+            username = data[1]
+            try:
+                if photo_id:
+                    await bot.send_photo(tg_id, photo=photo_id, caption=text_msg)
+                else:
+                    await bot.send_message(tg_id, text_msg)
+            except Exception as e:
+                users_count -= 1
+                await bot.send_message(callback.from_user.id, f'Could not send message: {tg_id}:{username}: {e}')
+
+        await callback.answer(f'Сообщение было успешно отправлено {users_count} пользователям!')
+        await bot.send_message(callback.from_user.id, f'Сообщение было успешно отправлено {users_count} пользователям!')
+    else:
+        await bot.send_message(callback.from_user.id, f'Отправка сообщения отменена')
+        await callback.answer("Отправка сообщения отменена")
+    await state.finish()  # Завершение состояния
+
+
 def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(commands_start, commands=[
         'start'], state='*')  # /start
@@ -774,5 +853,6 @@ def register_handlers_client(dp: Dispatcher):
 
     dp.register_message_handler(help_admin, commands=['help_admin'], state='*')  # /help_admin
     dp.register_message_handler(set_admin_for_user, commands=['set_admin'], state='*')  # /set_admin
+    dp.register_message_handler(notify_all_users, commands=['notify'], state='*')  # notify
 
     dp.register_message_handler(echo_error, state='*')

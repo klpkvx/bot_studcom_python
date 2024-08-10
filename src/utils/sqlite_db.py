@@ -72,11 +72,13 @@ class DataBase():
                            (building, tg_id)
                            )
 
-    def get_all_users_from_database(self):
+    def get_all_users_from_database(self, tg_id : int):
         with sq.connect(self.filename) as con:
             cursor = con.cursor()
+            if not self.is_user_admin(cursor, tg_id):
+                return f'{tg_id} not admin'
             cursor.execute(f'''
-            SELECT * FROM users
+            SELECT {Fields.telegram_id}, {Fields.telegram_name} FROM users
             ''')
             result = cursor.fetchall()
             return result
