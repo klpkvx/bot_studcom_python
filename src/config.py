@@ -21,15 +21,9 @@ class FileLocation:
     cmd_my_starosta = join(html_dir, 'cmd_my_starosta.html')
     cmd_rasselenie_info = join(html_dir, 'cmd_rasselenie_info.html')
     cmd_horo_help = join(html_dir, 'cmd_horo_help.html')
+    admin_help = join(html_dir, 'admin_help.html')
 
     time_json = json_dir + 'time.json'
     subsciptions_json = json_dir + 'subscriptions.json'
+
     database = sqlite_dir + 'user_database.sqlite'
-
-
-admin_ids = [
-    575238020,  # klepikov
-    536591458,  # Makarov
-    693189663,  # Trush
-    806602991,  # Arsenii
-]

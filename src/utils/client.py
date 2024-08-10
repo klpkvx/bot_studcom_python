@@ -39,12 +39,14 @@ async def commands_horo_help(message: types.Message, state: FSMContext):
 async def restart_bot(message: types.Message, state: FSMContext):
     await state.finish()
     await state.reset_data()
-    if (message.from_user.id not in config.admin_ids):
+    db = DataBase ()
+    admins_list = db.get_admins_tg_ids ()
+    if (message.from_user.id not in admins_list):
         await bot.send_message(message.from_user.id, "У вас нет доступа к рестарту бота!\n")
         return
 
-    await bot.send_message(message.from_user.id, 'Restarting botа')
-    for user_id in config.admin_ids:
+    await bot.send_message(message.from_user.id, 'Restarting bot')
+    for user_id in admins_list:
         if message.from_user.id != user_id:
             try:
                 await bot.send_message(user_id,
@@ -67,7 +69,9 @@ async def commands_feedback(message: types.Message, state: FSMContext):
     await state.reset_data()
     split = message.text.split(' ', 1)
     if len(split) > 1:
-        await subs_notify(config.admin_ids,
+        db = DataBase ()
+        admins_list = db.get_admins_tg_ids ()
+        await subs_notify(admins_list,
                           'Обратная связь от \n@{}\n{}:\n{}'.format(message.from_user.username,
                                                                     message.from_user.full_name, split[1]))
         await bot.send_message(message.from_user.id, "Фидбек отправлен!")
@@ -737,6 +741,13 @@ async def set_admin_for_user(message: types.Message, state='*'):
         f'Результат добавления пользователем {message.from_user.username} администратора {data[1]}: {res}')
 
 
+async def help_admin (message: types.Message, state='*'):
+    await state.finish()
+    await state.reset_data()
+    with open(config.FileLocation.admin_help, 'r', encoding='utf-8') as file:
+        await bot.send_message(message.from_user.id, file.read(), parse_mode=types.ParseMode.HTML)
+
+class Form(StatesGroup):
 def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(commands_start, commands=[
         'start'], state='*')  # /start
@@ -760,6 +771,8 @@ def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(set_time_horo, commands=['horo_time'], state='*')  # /horo_time
     dp.register_message_handler(subscribe_horo, commands=['horo_sub'], state='*')  # /horo_sub
     dp.register_message_handler(unsubscribe_horo, commands=['horo_unsub'], state='*')  # /horo_unsub
+
+    dp.register_message_handler(help_admin, commands=['help_admin'], state='*')  # /help_admin
     dp.register_message_handler(set_admin_for_user, commands=['set_admin'], state='*')  # /set_admin
 
     dp.register_message_handler(echo_error, state='*')
