@@ -1,10 +1,7 @@
 from os.path import join
 
 # В кавычки нужно ввести токен из BotFather
-TOKEN = '6618766493:AAExSHuMwIt126mg4F4mKUuiahcnOEwG32Y'
-
-
-# TOKEN = "5713033359:AAEBBgn-55ZDfGVEgLqMTsUmsA3HAjwp5ko"
+TOKEN = ''
 
 # Пути к папкам и файлам:
 
