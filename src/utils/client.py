@@ -175,7 +175,7 @@ def build_choose_floor_button(corpus, building):
         elif corpus in ['Г', 'Е', 'Ж', 'Д']:
             floor_list_1 = [floor_1, floor_2, floor_3, floor_4]
             floor_list_2 = [floor_5, floor_6, floor_7, floor_8, floor_9]
-        return keyboard_build_query_floor.row(*floor_list_1).row(*floor_list_2).row(build_cancel_button())
+            return keyboard_build_query_floor.row(*floor_list_1).row(*floor_list_2).row(build_cancel_button())
 
 
 async def commands_get_information(message: types.Message, state: FSMContext):

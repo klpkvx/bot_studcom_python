@@ -52,14 +52,15 @@ class DataBase():
             return False
 
     def register_user_in_database_if_needed(self, tg_id: int, username: str):
+        # Use a single connection for better performance
         with sq.connect(self.filename) as con:
             cursor = con.cursor()
             if self.is_user_exists_in_database(cursor, tg_id):
                 return
             cursor.execute(f'''
             INSERT INTO users ({Fields.telegram_id}, {Fields.telegram_name}) VALUES (?, ?)
-            ''', (tg_id, username)
-                           )
+            ''', (tg_id, username))
+            con.commit()  # Explicitly commit the transaction
 
     def update_user_building(self, tg_id: int, building: str):
         with sq.connect(self.filename) as con:
